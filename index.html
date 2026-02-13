@@ -402,62 +402,74 @@
     </div>
 
     <script>
-        // --- VIDEO HOVER-PLAY LOGIC ---
-        document.querySelectorAll('.video-card').forEach(card => {
+        const isMobile = () => window.matchMedia("(max-width: 768px)").matches;
+
+        // General Media Starter
+        const startMedia = (card) => {
             const video = card.querySelector('video');
-            
-            card.addEventListener('mouseenter', () => {
-                video.play();
-            });
+            if (video) video.play().catch(() => {});
+            if (card.startSlideshow) card.startSlideshow();
+        };
 
-            card.addEventListener('mouseleave', () => {
-                video.pause();
-                video.currentTime = 0; // Reset to first frame
-            });
-        });
+        // General Media Stopper
+        const stopMedia = (card) => {
+            const video = card.querySelector('video');
+            if (video) { video.pause(); video.currentTime = 0; }
+            if (card.stopSlideshow) card.stopSlideshow();
+        };
 
-        // --- PHOTO SLIDESHOW LOGIC ---
+        // Initialize Slideshow Logic for Photos
         document.querySelectorAll('.photo-card').forEach(card => {
             let interval;
             const images = card.querySelectorAll('.media-container img');
             const counter = card.querySelector('.image-counter');
-            let currentIndex = 0;
+            let idx = 0;
 
-            const showNext = () => {
-                images[currentIndex].classList.remove('active');
-                currentIndex = (currentIndex + 1) % images.length;
-                images[currentIndex].classList.add('active');
-                counter.innerText = `${currentIndex + 1} / ${images.length}`;
-            };
-
-            const startLoop = () => {
+            card.startSlideshow = () => {
                 clearInterval(interval);
-                interval = setInterval(showNext, 2000);
+                interval = setInterval(() => {
+                    images[idx].classList.remove('active');
+                    idx = (idx + 1) % images.length;
+                    images[idx].classList.add('active');
+                    counter.innerText = `${idx + 1} / ${images.length}`;
+                }, 2000);
             };
 
-            card.addEventListener('mouseenter', () => {
-                showNext(); // Switch immediately to 2nd img
-                startLoop();
-            });
-
-            card.querySelector('.media-container').addEventListener('click', () => {
-                showNext();
-                startLoop(); // Reset 2s timer on manual click
-            });
-
-            card.addEventListener('mouseleave', () => {
+            card.stopSlideshow = () => {
                 clearInterval(interval);
                 images.forEach(img => img.classList.remove('active'));
                 images[0].classList.add('active');
-                currentIndex = 0;
+                idx = 0;
                 counter.innerText = `1 / ${images.length}`;
-            });
+            };
         });
 
-        // --- MUTE BUTTON LOGIC ---
+        // --- TRIGGER LOGIC ---
+        document.querySelectorAll('.article').forEach(card => {
+            // DESKTOP HOVER: Only works if NOT mobile
+            card.addEventListener('mouseenter', () => {
+                if (!isMobile()) startMedia(card);
+            });
+            card.addEventListener('mouseleave', () => {
+                if (!isMobile()) stopMedia(card);
+            });
+
+            // MOBILE INTERSECTION: Only works if IS mobile
+            const observer = new IntersectionObserver((entries) => {
+                if (!isMobile()) return; // Kill mobile logic on desktop
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) startMedia(card);
+                    else stopMedia(card);
+                });
+            }, { threshold: 0.6 });
+
+            observer.observe(card);
+        });
+
+        // Mute logic
         document.querySelectorAll('.mute-btn').forEach(btn => {
             btn.addEventListener('click', (e) => {
-                e.stopPropagation(); // Don't trigger the click-advance for photos if this was on a photo card
+                e.stopPropagation();
                 const video = btn.closest('.article').querySelector('video');
                 if (video) {
                     video.muted = !video.muted;
@@ -465,18 +477,6 @@
                 }
             });
         });
-
-        // --- FORM & REQUEST HANDLING ---
-        document.querySelectorAll('.request-btn').forEach(btn => {
-            btn.addEventListener('click', () => {
-                const prod = btn.getAttribute('data-product');
-                document.getElementById('product-input').value = prod;
-                document.getElementById('vision-input').value = `I am interested in ${prod}. Here's my idea: `;
-                document.getElementById('contact').scrollIntoView({ behavior: 'smooth' });
-            });
-        });
     </script>
 </body>
 </html>
-
- 
