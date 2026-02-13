@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Marshial Arts | Visual Artist</title>
+    <style>
+        /* --- DESIGN SYSTEM --- */
+        :root {
+            --bg: #050505;
+            --accent-1: #ff007f;
+            --accent-2: #00d4ff;
+            --glass: rgba(255, 255, 255, 0.03);
+            --border: rgba(255, 255, 255, 0.1);
+            --text-dim: #888;
+            --transition: 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+
+        * { box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+
+        body {
+            margin: 0;
+            background-color: var(--bg);
+            color: #fff;
+            font-family: 'Inter', -apple-system, system-ui, sans-serif;
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        /* --- INNERBLOOM BACKGROUND --- */
+        .ambient-bg {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1;
+            filter: blur(120px);
+            opacity: 0.45;
+            transition: var(--transition);
+        }
+
+        .blob {
+            position: absolute;
+            border-radius: 50%;
+            transition: background var(--transition);
+        }
+
+        .blob-1 {
+            top: 5%; left: 10%; width: 50vw; height: 50vw;
+            background: var(--accent-1);
+            animation: float 25s infinite alternate;
+        }
+
+        .blob-2 {
+            bottom: 5%; right: 10%; width: 55vw; height: 55vw;
+            background: var(--accent-2);
+            animation: float 30s infinite alternate-reverse;
+        }
+
+        @keyframes float {
+            from { transform: translate(0, 0) rotate(0deg); }
+            to { transform: translate(150px, 100px) rotate(30deg); }
+        }
+
+        /* --- LAYOUT --- */
+        .container { max-width: 1100px; margin: 0 auto; padding: 0 1.5rem; }
+
+        header { padding: 8rem 0 4rem; text-align: center; }
+        h1 { font-weight: 200; letter-spacing: 15px; text-transform: uppercase; margin: 0; font-size: 2.8rem; }
+        .subtitle { color: var(--text-dim); text-transform: uppercase; letter-spacing: 4px; font-size: 0.75rem; margin-top: 15px; }
+
+        /* --- CATEGORIES --- */
+        .category-section { margin-bottom: 8rem; }
+        
+        .category-header {
+            margin-bottom: 3rem;
+            border-left: 2px solid var(--accent-1);
+            padding-left: 1.5rem;
+        }
+
+        .category-header h2 { font-weight: 300; letter-spacing: 5px; text-transform: uppercase; margin: 0; font-size: 1.4rem; }
+        .category-desc { color: var(--text-dim); font-size: 0.9rem; max-width: 500px; margin-top: 0.5rem; }
+
+        /* --- GRIDS --- */
+        .grid { display: grid; gap: 2rem; }
+        .grid-3 { grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); }
+        
+        /* --- PRODUCT CARDS --- */
+        .article {
+            background: var(--glass);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            overflow: hidden;
+            transition: var(--transition);
+            backdrop-filter: blur(15px);
+            position: relative;
+        }
+
+        .article:hover { border-color: rgba(255,255,255,0.3); transform: translateY(-5px); }
+
+        .media-container {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 10 / 16; /* 10:16 VERTICAL RATIO */
+            background: #000;
+            cursor: pointer;
+        }
+
+        .media-container img, .media-container video {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            object-fit: cover;
+            transition: opacity 0.5s ease-in-out;
+        }
+
+        /* Photo card specific opacity */
+        .photo-card .media-container img { opacity: 0; z-index: 2; }
+        .photo-card .media-container img.active { opacity: 1; }
+
+        /* OVERLAYS */
+        .image-counter, .mute-btn {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(8px);
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.65rem;
+            z-index: 15;
+            border: 1px solid rgba(255,255,255,0.1);
+            color: #fff;
+        }
+
+        .mute-btn { 
+            width: 36px; height: 36px; padding: 0; border-radius: 50%; 
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer;
+        }
+        .mute-btn svg { width: 16px; height: 16px; fill: currentColor; }
+
+        .info { padding: 1.5rem; }
+        .info h3 { margin: 0 0 0.5rem; font-weight: 400; font-size: 1rem; letter-spacing: 1px; }
+        .price { color: var(--accent-2); font-weight: 700; font-size: 1.1rem; margin-bottom: 1.5rem; display: block; }
+
+        .request-btn {
+            width: 100%;
+            background: transparent;
+            color: #fff;
+            border: 1px solid var(--border);
+            padding: 0.9rem;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-size: 0.7rem;
+            transition: 0.3s;
+            border-radius: 4px;
+        }
+
+        .request-btn:hover { background: #fff; color: #000; font-weight: bold; }
+
+        .extras-box {
+            background: rgba(255,255,255,0.02);
+            border: 1px dashed var(--border);
+            padding: 2rem;
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .extras-box h3 { font-size: 0.85rem; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 1.5rem; color: var(--accent-1); }
+        .extras-list { list-style: none; padding: 0; margin: 0; font-size: 0.8rem; }
+        .extras-list li {
+            display: flex; justify-content: space-between;
+            padding: 0.7rem 0;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            color: #aaa;
+        }
+        .extras-list li span { color: var(--accent-2); font-weight: bold; }
+
+        /* --- CONTACT --- */
+        .contact-section {
+            background: var(--glass);
+            border: 1px solid var(--border);
+            padding: 5rem 3rem;
+            border-radius: 20px;
+            margin: 4rem 0 10rem;
+        }
+
+        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+        .full-width { grid-column: span 2; }
+
+        input, textarea {
+            width: 100%; background: rgba(255,255,255,0.04);
+            border: 1px solid var(--border); padding: 1.2rem;
+            color: white; border-radius: 6px; font-family: inherit;
+        }
+
+        .submit-btn {
+            background: var(--accent-1); color: white; border: none;
+            padding: 1.2rem 4rem; text-transform: uppercase;
+            letter-spacing: 3px; font-weight: bold; cursor: pointer;
+            border-radius: 50px; transition: 0.4s;
+        }
+
+        footer {
+            padding: 4rem 0;
+            border-top: 1px solid var(--border);
+            text-align: center;
+            color: #555;
+            font-size: 0.75rem;
+        }
+
+        @media (max-width: 768px) {
+            .form-grid { grid-template-columns: 1fr; }
+            .full-width { grid-column: span 1; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="ambient-bg" id="bg-container">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+    </div>
+
+    <div class="container">
+        <header>
+            <h1><b>Marshial Arts</b><br>Visual Artist</h1>
+            <p class="subtitle">Video & Photography Catalogue</p>
+        </header>
+
+        <section class="category-section">
+            <div class="category-header">
+                <h2>01. Video Basic</h2>
+                <p class="category-desc">Full-HD motion loops, optimized for social media and web shops.</p>
+            </div>
+            <div class="grid grid-3">
+                
+                <div class="article video-card">
+                    <button class="mute-btn" title="Toggle Sound">
+                        <svg viewBox="0 0 24 24"><path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77zM3 9v6h4l5 5V4L7 9H3z"/></svg>
+                    </button>
+                    <div class="media-container">
+                        <video src="https://res.cloudinary.com/dctafjvwt/video/upload/v1771012265/product_nosound_te3c6r.mp4" muted loop playsinline></video>
+                    </div>
+                    <div class="info">
+                        <h3>Basic Loop</h3>
+                       <p class="category-desc"><br>2+ Scenes or Products (8-10 seconds)<br>High-quality motion loop and visual teaser. No sound, simply add your own choice for social media uploads.</p>
+                        <span class="price">ab 149€</span>
+                        <button class="request-btn" data-product="Basic Loop (ab 149€)">Request Now</button>
+                    </div>
+                </div>
+
+                <div class="article video-card">
+                    <button class="mute-btn" title="Toggle Sound">
+                        <svg viewBox="0 0 24 24"><path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77zM3 9v6h4l5 5V4L7 9H3z"/></svg>
+                    </button>
+                    <div class="media-container">
+                        <video src="https://res.cloudinary.com/dctafjvwt/video/upload/v1771012267/product_sound_hdcqkg.mp4" muted loop playsinline></video>
+                    </div>
+                    <div class="info">
+                        <h3>Sound Loop</h3>
+                         <p class="category-desc"><br>2+ Scenes or Products (8-10 seconds) <br>High-quality motion loop with sound effects. You choose the vibe.<br><br></b></b></p>
+                        <span class="price">ab 199€</span>
+                        <button class="request-btn" data-product="Sound Loop (ab 199€)">Request Now</button>
+                    </div>
+                </div>
+
+                <div class="extras-box">
+                    <h3>Additional Extras</h3>
+                    <ul class="extras-list">
+                        <li>Add length <span>+39€</span></li>
+                        <li>Add product <span>+49€</span></li>
+                        <li>Express 72h <span>+99€</span></li>
+                        <li>10% Discount <span>-10%</span></li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section class="category-section">
+            <div class="category-header">
+                <h2>02. Video Plus</h2>
+                <p class="category-desc">Full-HD motion loops, optimized for social media and web shops.</p>
+            </div>
+            <div class="grid grid-3">
+                
+                <div class="article video-card">
+                    <button class="mute-btn" title="Toggle Sound">
+                        <svg viewBox="0 0 24 24"><path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77zM3 9v6h4l5 5V4L7 9H3z"/></svg>
+                    </button>
+                    <div class="media-container">
+                        <video src="https://res.cloudinary.com/dctafjvwt/video/upload/v1771012287/human_nosound_fqz1y3.mp4" muted loop playsinline></video>
+                    </div>
+                    <div class="info">
+                        <h3>Model Basic Loop</h3>
+                        <p class="category-desc"><br>2+ Scenes or Products (8-10 seconds)<br>Motion loop and visual teaser.</p>
+                        <span class="price">ab 199€</span>
+                        <button class="request-btn" data-product="Basic Loop (ab 149€)">Request Now</button>
+                    </div>
+                </div>
+
+                <div class="article video-card">
+                    <button class="mute-btn" title="Toggle Sound">
+                        <svg viewBox="0 0 24 24"><path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77zM3 9v6h4l5 5V4L7 9H3z"/></svg>
+                    </button>
+                    <div class="media-container">
+                        <video src="https://res.cloudinary.com/dctafjvwt/video/upload/v1771012289/human_sound_uel2l5.mp4" muted loop playsinline></video>
+                    </div>
+                    <div class="info">
+                        <h3>Model Sound Loop</h3>
+                        <p class="category-desc"><br>2+ Scenes or Products (8-10 seconds)<br>Motion loop with sound effects.</p>
+                        <span class="price">ab 249€</span>
+                        <button class="request-btn" data-product="Sound Loop (ab 199€)">Request Now</button>
+                    </div>
+                </div>
+
+                <div class="extras-box">
+                    <h3>Additional Extras</h3>
+                    <ul class="extras-list">
+                        <li>Add length <span>+39€</span></li>
+                        <li>Add product <span>+49€</span></li>
+                        <li>Express 72h <span>+99€</span></li>
+                        <li>10% Discount <span>-10%</span></li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section class="category-section">
+            <div class="category-header">
+                <h2>03. Photography</h2>
+                <p class="category-desc">High-resolution stills. Hover over cards to view variations.</p>
+            </div>
+            <div class="grid grid-3">
+                
+                <div class="article photo-card">
+                    <div class="image-counter">1 / 4</div>
+                    <div class="media-container">
+                        <img src="https://res.cloudinary.com/dctafjvwt/image/upload/v1771012196/Basic_3_mhv1gz.jpg" class="active">
+                        <img src="https://res.cloudinary.com/dctafjvwt/image/upload/v1771012198/Basic_2_wsa3cq.jpg">
+                        <img src="https://res.cloudinary.com/dctafjvwt/image/upload/v1771012198/Basic_1_pmdxfn.jpg">
+                        <img src="https://res.cloudinary.com/dctafjvwt/image/upload/v1771012196/Basic_4_yoityq.jpg">
+                    </div>
+                    <div class="info">
+                        <h3>Environment Pack</h3>
+                        <p class="category-desc">4 Images of your product. Custom lighting and mood environments.</p>
+                        <span class="price">ab 49€</span>
+                        <button class="request-btn" data-product="Environment Pack (ab 49€)">Request Now</button>
+                    </div>
+                </div>
+
+                <div class="article photo-card">
+                    <div class="image-counter">1 / 4</div>
+                    <div class="media-container">
+                        <img src="https://res.cloudinary.com/dctafjvwt/image/upload/v1771012237/Model_1_fko824.jpg" class="active">
+                        <img src="https://res.cloudinary.com/dctafjvwt/image/upload/v1771012239/Model_2_gdedzk.jpg">
+                        <img src="https://res.cloudinary.com/dctafjvwt/image/upload/v1771012238/Model_3_udpjnm.jpg">
+                        <img src="https://res.cloudinary.com/dctafjvwt/image/upload/v1771012239/Model_4_dnjd3h.jpg">
+                    </div>
+                    <div class="info">
+                        <h3>Model Pack</h3>
+                        <p class="category-desc">4 Images of your product on a model. Includes clothing styling.</p>
+                        <span class="price">ab 69€</span>
+                        <button class="request-btn" data-product="Model Pack (ab 69€)">Request Now</button>
+                    </div>
+                </div>
+
+                <div class="extras-box">
+                    <h3>Additional Extras</h3>
+                    <ul class="extras-list">
+                        <li>Add 2 Images <span>+19€</span></li>
+                        <li>Express 72h <span>+59€</span></li>
+                        <li>Model Surcharge <span>+$90</span></li>
+                        <li>Full Rights <span>+$300</span></li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section class="contact-section" id="contact">
+            <h2 style="font-weight: 200; text-transform: uppercase; letter-spacing: 5px; margin-bottom: 2rem;">Work with me</h2>
+            <form id="contact-form" action="https://formspree.io/f/YOUR_FORM_ID" method="POST">
+                <div class="form-grid">
+                    <input type="text" name="name" placeholder="Name" required>
+                    <input type="email" name="email" placeholder="Email" required>
+                    <input type="text" id="product-input" name="product" placeholder="Product Interest" class="full-width">
+                    <textarea id="vision-input" name="message" rows="5" placeholder="Project details..." class="full-width"></textarea>
+                </div>
+                <button type="submit" class="submit-btn" id="submit-btn">Send Inquiry</button>
+            </form>
+        </section>
+
+        <footer>
+              <p>Impressum</p>
+            <p><strong>Marcel H</strong><br>
+            Creative Visual Artist<br>
+            Musterstraße 123, 10115 Berlin<br>
+            Germany</p>
+        </footer>
+    </div>
+
+    <script>
+        // --- VIDEO HOVER-PLAY LOGIC ---
+        document.querySelectorAll('.video-card').forEach(card => {
+            const video = card.querySelector('video');
+            
+            card.addEventListener('mouseenter', () => {
+                video.play();
+            });
+
+            card.addEventListener('mouseleave', () => {
+                video.pause();
+                video.currentTime = 0; // Reset to first frame
+            });
+        });
+
+        // --- PHOTO SLIDESHOW LOGIC ---
+        document.querySelectorAll('.photo-card').forEach(card => {
+            let interval;
+            const images = card.querySelectorAll('.media-container img');
+            const counter = card.querySelector('.image-counter');
+            let currentIndex = 0;
+
+            const showNext = () => {
+                images[currentIndex].classList.remove('active');
+                currentIndex = (currentIndex + 1) % images.length;
+                images[currentIndex].classList.add('active');
+                counter.innerText = `${currentIndex + 1} / ${images.length}`;
+            };
+
+            const startLoop = () => {
+                clearInterval(interval);
+                interval = setInterval(showNext, 2000);
+            };
+
+            card.addEventListener('mouseenter', () => {
+                showNext(); // Switch immediately to 2nd img
+                startLoop();
+            });
+
+            card.querySelector('.media-container').addEventListener('click', () => {
+                showNext();
+                startLoop(); // Reset 2s timer on manual click
+            });
+
+            card.addEventListener('mouseleave', () => {
+                clearInterval(interval);
+                images.forEach(img => img.classList.remove('active'));
+                images[0].classList.add('active');
+                currentIndex = 0;
+                counter.innerText = `1 / ${images.length}`;
+            });
+        });
+
+        // --- MUTE BUTTON LOGIC ---
+        document.querySelectorAll('.mute-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation(); // Don't trigger the click-advance for photos if this was on a photo card
+                const video = btn.closest('.article').querySelector('video');
+                if (video) {
+                    video.muted = !video.muted;
+                    btn.style.color = video.muted ? "#fff" : "var(--accent-2)";
+                }
+            });
+        });
+
+        // --- FORM & REQUEST HANDLING ---
+        document.querySelectorAll('.request-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const prod = btn.getAttribute('data-product');
+                document.getElementById('product-input').value = prod;
+                document.getElementById('vision-input').value = `I am interested in ${prod}. Here's my idea: `;
+                document.getElementById('contact').scrollIntoView({ behavior: 'smooth' });
+            });
+        });
+    </script>
+</body>
+</html>
