@@ -457,7 +457,17 @@
 
             observer.observe(card);
         });
+        
+        // --- REQUEST BUTTONS ---
+        document.querySelectorAll('.request-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const prod = btn.getAttribute('data-product');
+                document.getElementById('product-input').value = prod;
+                document.getElementById('vision-input').value = `I am interested in ${prod}. `;
+                document.getElementById('contact').scrollIntoView({ behavior: 'smooth' });
+            });
 
+        
         // Mute logic
         document.querySelectorAll('.mute-btn').forEach(btn => {
             btn.addEventListener('click', (e) => {
