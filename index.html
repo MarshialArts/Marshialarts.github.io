@@ -138,7 +138,7 @@
         }
         .mute-btn svg { width: 16px; height: 16px; fill: currentColor; }
 
-        .info { padding: 1.5rem; }
+        .info { padding: 1.5rem; position: relative; z-index: 5; }
         .info h3 { margin: 0 0 0.5rem; font-weight: 400; font-size: 1rem; letter-spacing: 1px; }
         .price { color: var(--accent-2); font-weight: 700; font-size: 1.1rem; margin-bottom: 1.5rem; display: block; }
 
@@ -154,6 +154,8 @@
             font-size: 0.7rem;
             transition: 0.3s;
             border-radius: 4px;
+            position: relative;
+            z-index: 10;
         }
 
         .request-btn:hover { background: #fff; color: #000; font-weight: bold; }
@@ -245,12 +247,12 @@
                         <h3>Basic Loop</h3>
                        <p class="category-desc"><br>2+ Scenes or Products (8-10 seconds)<br>High-quality motion loop and visual teaser. No sound, simply add your own choice for social media uploads.</p>
                         <span class="price">from 149€</span>
-                        <button class="request-btn" data-product="Basic Loop (ab 149€)">Request Now</button>
+                        <button type="button" class="request-btn" data-product="Basic Loop (ab 149€)">Request Now</button>
                     </div>
                 </div>
 
                 <div class="article video-card">
-                    <button class="mute-btn" title="Toggle Sound">
+                    <button type="button" class="mute-btn" title="Toggle Sound">
                         <svg viewBox="0 0 24 24"><path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77zM3 9v6h4l5 5V4L7 9H3z"/></svg>
                     </button>
                     <div class="media-container">
@@ -260,7 +262,7 @@
                         <h3>Sound Loop</h3>
                          <p class="category-desc"><br>2+ Scenes or Products (8-10 seconds) <br>High-quality motion loop with sound effects. You choose the vibe.<br><br></b></b></p>
                         <span class="price">from 199€</span>
-                        <button class="request-btn" data-product="Sound Loop (ab 199€)">Request Now</button>
+                        <button type="button" class="request-btn" data-product="Sound Loop (ab 199€)">Request Now</button>
                     </div>
                 </div>
 
@@ -291,12 +293,12 @@
                         <h3>Model Basic Loop</h3>
                         <p class="category-desc"><br>2+ Scenes or Products (8-10 seconds)<br>Motion loop and visual teaser. No sound, simply add your own choice for social media uploads.</p>
                         <span class="price">from 199€</span>
-                        <button class="request-btn" data-product="Basic Loop (ab 149€)">Request Now</button>
+                        <button type="button" class="request-btn" data-product="Model Basic Loop (ab 199€)">Request Now</button>
                     </div>
                 </div>
 
                 <div class="article video-card">
-                    <button class="mute-btn" title="Toggle Sound">
+                    <button type="button" class="mute-btn" title="Toggle Sound">
                         <svg viewBox="0 0 24 24"><path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77zM3 9v6h4l5 5V4L7 9H3z"/></svg>
                     </button>
                     <div class="media-container">
@@ -306,7 +308,7 @@
                         <h3>Model Sound Loop</h3>
                         <p class="category-desc"><br>2+ Scenes or Products (8-10 seconds)<br>Motion loop with sound effects.<br><br></p>
                         <span class="price">from 249€</span>
-                        <button class="request-btn" data-product="Sound Loop (ab 199€)">Request Now</button>
+                        <button type="button" class="request-btn" data-product="Model Sound Loop (ab 249€)">Request Now</button>
                     </div>
                 </div>
 
@@ -341,7 +343,7 @@
                         <h3>Environment Pack</h3>
                         <p class="category-desc">4 Images of your product. Custom moods with lighting and environments.</p>
                         <span class="price">from 49€</span>
-                        <button class="request-btn" data-product="Environment Pack (ab 49€)">Request Now</button>
+                        <button type="button" class="request-btn" data-product="Environment Pack (ab 49€)">Request Now</button>
                     </div>
                 </div>
 
@@ -357,7 +359,7 @@
                         <h3>Model Pack</h3>
                         <p class="category-desc">4 Images of your product on a model. Includes variable clothing and backgrounds.</p>
                         <span class="price">from 69€</span>
-                        <button class="request-btn" data-product="Model Pack (ab 69€)">Request Now</button>
+                        <button type="button" class="request-btn" data-product="Model Pack (ab 69€)">Request Now</button>
                     </div>
                 </div>
 
@@ -460,11 +462,19 @@
         
         // --- REQUEST BUTTONS ---
         document.querySelectorAll('.request-btn').forEach(btn => {
-            btn.addEventListener('click', () => {
+            btn.addEventListener('click', (e) => {
+                e.preventDefault();
                 const prod = btn.getAttribute('data-product');
-                document.getElementById('product-input').value = prod;
-                document.getElementById('vision-input').value = `I am interested in ${prod}. `;
-                document.getElementById('contact').scrollIntoView({ behavior: 'smooth' });
+                const productInput = document.getElementById('product-input');
+                const visionInput = document.getElementById('vision-input');
+                const contactSection = document.getElementById('contact');
+
+                if (productInput) productInput.value = prod;
+                if (visionInput) visionInput.value = `I am interested in ${prod}. `;
+                
+                if (contactSection) {
+                    contactSection.scrollIntoView({ behavior: 'smooth' });
+                }
             });
         });
         
