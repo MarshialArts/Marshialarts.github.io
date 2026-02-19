@@ -513,48 +513,52 @@
         });
         
         // --- AJAX FORM SUBMISSION ---
-        const contactForm = document.getElementById('contact-form');
-        const formResult = document.getElementById('form-result');
-        const submitBtn = document.getElementById('submit-btn');
+const contactForm = document.getElementById('contact-form');
+const submitBtn = document.getElementById('submit-btn');
 
-        contactForm.addEventListener('submit', function(e) {
-            e.preventDefault();
-            submitBtn.disabled = true;
-            submitBtn.innerText = "Processing...";
+contactForm.addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    // 1. Disable button and show processing
+    submitBtn.disabled = true;
+    submitBtn.innerText = "Processing...";
 
-            const formData = new FormData(contactForm);
-            const object = Object.fromEntries(formData);
-            const json = JSON.stringify(object);
+    const formData = new FormData(contactForm);
+    const object = Object.fromEntries(formData);
+    const json = JSON.stringify(object);
 
-            fetch('https://api.web3forms.com/submit', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-                body: json
-            })
-            .then(async (response) => {
-                if (response.status == 200) {
-                    // 2. Wait 1 second (so user sees "Processing...")
-                    setTimeout(() => {
-                        // 3. Turn blobs green
-                        document.querySelectorAll('.blob').forEach(blob => {
-                            blob.classList.add('is-active');
-                        });
+    fetch('https://api.web3forms.com/submit', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        body: json
+    })
+    .then(async (response) => {
+        if (response.status == 200) {
+            // 2. SUCCESS: Wait 1 second so the user sees the "Processing" state
+            setTimeout(() => {
+                // 3. Turn blobs green ONLY here
+                document.querySelectorAll('.blob').forEach(blob => {
+                    blob.classList.add('is-active');
+                });
 
-                        // 4. Update button to Thank You
-                        submitBtn.innerText = "Thank you";
-                        submitBtn.classList.add('success');
-                        contactForm.reset();
-                    }, 1000);
-                } else {
-                    submitBtn.innerText = "Error!";
-                    submitBtn.disabled = false;
-                }
-            })
-            .catch(error => {
-                formResult.innerHTML = "Something went wrong!";
-            })
-            
-        });
+                // 4. Update button appearance
+                submitBtn.innerText = "Thank you";
+                submitBtn.classList.add('success');
+                contactForm.reset();
+            }, 1000);
+        } else {
+            // Error handling if server responds with error
+            submitBtn.innerText = "Error! Try again.";
+            submitBtn.disabled = false;
+        }
+    })
+    .catch(error => {
+        // Error handling if network fails
+        console.error(error);
+        submitBtn.innerText = "Network Error";
+        submitBtn.disabled = false;
+    });
+});
         
         // Mute logic
         document.querySelectorAll('.mute-btn').forEach(btn => {
