@@ -377,11 +377,13 @@
         <section class="category-section">
             <div class="category-header">
                 <h2>How does it work?</h2>
-                <p class="category-desc">Send one of the following:
-                <br>1. Web page with product photos.
-                <br>2. Well lit photos of your product (phone camera works).
-                <br>3. Send the physical product.
-                <br>4. Write your vision (eg.: colors/background - optional)</p></p>
+                <p class="category-desc"><b>First step:</b>
+                <br>Send a request, lets get in touch!
+                <p class="category-desc"><b>What you need to deliver:</b>
+                <br>Send: Web page with product photos.
+                <br>Or: Well lit photos of your product (phone camera works).
+                <br>Big Project? Send the physical product.
+                <br>+ Write your vision (eg.: colors/background - optional)</p></p>
             </div>
 
         </section>
@@ -389,15 +391,19 @@
          <!-- CONTACT -->  
         <section class="contact-section" id="contact">
             <h2 style="font-weight: 200; text-transform: uppercase; letter-spacing: 5px; margin-bottom: 2rem;">Work with me</h2>
-            <form id="contact-form" action="https://formspree.io/f/YOUR_FORM_ID" method="POST">
-                <div class="form-grid">
-                    <input type="text" name="name" placeholder="Name" required>
-                    <input type="email" name="email" placeholder="Email" required>
-                    <input type="text" id="product-input" name="product" placeholder="Product Interest" class="full-width">
-                    <textarea id="vision-input" name="message" rows="5" placeholder="Project details..." class="full-width"></textarea>
-                </div>
-                <br>
-                <button type="submit" class="submit-btn" id="submit-btn">Send Inquiry</button>
+            <form id="contact-form" action="https://api.web3forms.com/submit" method="POST">
+            <input type="hidden" name="access_key" value="6359f223-b8af-41be-ad8b-a8606d52e4b6">
+
+            <input type="checkbox" name="botcheck" class="hidden" style="display: none;">
+
+            <div class="form-grid">
+                <input type="text" name="name" placeholder="Name" required>
+                <input type="email" name="email" placeholder="Email" required>
+                <input type="text" id="product-input" name="product" placeholder="Product Interest" class="full-width">
+                <textarea id="vision-input" name="message" rows="5" placeholder="Project details..." class="full-width"></textarea>
+            </div>
+            <br>
+            <button type="submit" class="submit-btn" id="submit-btn">Send Request</button>
             </form>
         </section>
 
