@@ -10,6 +10,7 @@
             --bg: #050505;
             --accent-1: #ff007f;
             --accent-2: #00d4ff;
+            --accent-success: #22c55e; /* Green color variable */
             --glass: rgba(255, 255, 255, 0.03);
             --border: rgba(255, 255, 255, 0.1);
             --text-dim: #888;
@@ -42,8 +43,13 @@
             position: absolute;
             border-radius: 50%;
             transition: background var(--transition);
+            transition: background 1.5s ease;
         }
 
+        .blob.is-active {
+            background: var(--accent-success) !important;
+        }
+        
         .blob-1 {
             top: 5%; left: 10%; width: 50vw; height: 50vw;
             background: var(--accent-1);
@@ -60,6 +66,8 @@
             from { transform: translate(0, 0) rotate(0deg); }
             to { transform: translate(150px, 100px) rotate(30deg); }
         }
+
+        
 
         /* --- LAYOUT --- */
         .container { max-width: 1100px; margin: 0 auto; padding: 0 1.5rem; }
@@ -485,6 +493,12 @@
         document.querySelectorAll('.request-btn').forEach(btn => {
             btn.addEventListener('click', (e) => {
                 e.preventDefault();
+                
+                // Turn blobs green
+                document.querySelectorAll('.blob').forEach(blob => {
+                    blob.classList.add('is-active');
+                });
+                
                 const prod = btn.getAttribute('data-product');
                 const productInput = document.getElementById('product-input');
                 const visionInput = document.getElementById('vision-input');
@@ -496,6 +510,49 @@
                 if (contactSection) {
                     contactSection.scrollIntoView({ behavior: 'smooth' });
                 }
+            });
+        });
+        
+        // --- AJAX FORM SUBMISSION ---
+        const contactForm = document.getElementById('contact-form');
+        const formResult = document.getElementById('form-result');
+        const submitBtn = document.getElementById('submit-btn');
+
+        contactForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            submitBtn.disabled = true;
+            submitBtn.innerText = "Processing...";
+
+            const formData = new FormData(contactForm);
+            const object = Object.fromEntries(formData);
+            const json = JSON.stringify(object);
+
+            fetch('https://api.web3forms.com/submit', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+                body: json
+            })
+            .then(async (response) => {
+                let json = await response.json();
+                if (response.status == 200) {
+                    formResult.style.color = "var(--accent-success)";
+                    formResult.innerHTML = "Request sent successfully!";
+                    contactForm.reset();
+                } else {
+                    formResult.style.color = "red";
+                    formResult.innerHTML = json.message;
+                }
+            })
+            .catch(error => {
+                formResult.innerHTML = "Something went wrong!";
+            })
+            .then(function() {
+                submitBtn.disabled = false;
+                submitBtn.innerText = "Send Request";
+                setTimeout(() => { formResult.innerHTML = ""; }, 5000);
             });
         });
         
