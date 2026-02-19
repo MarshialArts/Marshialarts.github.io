@@ -213,6 +213,9 @@
             border-radius: 50px; transition: 0.4s;
         }
 
+        .submit-btn.success {
+            background: var(--accent-success);
+            
         footer {
             padding: 4rem 0;
             border-top: 1px solid var(--border);
@@ -538,12 +541,20 @@
             .then(async (response) => {
                 let json = await response.json();
                 if (response.status == 200) {
-                    formResult.style.color = "var(--accent-success)";
-                    formResult.innerHTML = "Request sent successfully!";
-                    contactForm.reset();
+                    // Blobs turn green only on success
+                    document.querySelectorAll('.blob').forEach(blob => {
+                        blob.classList.add('is-active');
+                    });
+
+                    // Show "Thank you" after 1 second of "Processing..."
+                    setTimeout(() => {
+                        submitBtn.innerText = "Thank you";
+                        submitBtn.classList.add('success');
+                        contactForm.reset();
+                    }, 1000);
                 } else {
-                    formResult.style.color = "red";
-                    formResult.innerHTML = json.message;
+                    submitBtn.innerText = "Error!";
+                    submitBtn.disabled = false;
                 }
             })
             .catch(error => {
