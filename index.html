@@ -497,10 +497,7 @@
             btn.addEventListener('click', (e) => {
                 e.preventDefault();
                 
-                // Turn blobs green
-                document.querySelectorAll('.blob').forEach(blob => {
-                    blob.classList.add('is-active');
-                });
+                
                 
                 const prod = btn.getAttribute('data-product');
                 const productInput = document.getElementById('product-input');
