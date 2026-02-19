@@ -215,6 +215,7 @@
 
         .submit-btn.success {
             background: var(--accent-success);
+        }
             
         footer {
             padding: 4rem 0;
@@ -497,8 +498,6 @@
             btn.addEventListener('click', (e) => {
                 e.preventDefault();
                 
-                
-                
                 const prod = btn.getAttribute('data-product');
                 const productInput = document.getElementById('product-input');
                 const visionInput = document.getElementById('vision-input');
@@ -529,22 +528,19 @@
 
             fetch('https://api.web3forms.com/submit', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json'
-                },
+                headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
                 body: json
             })
             .then(async (response) => {
-                let json = await response.json();
                 if (response.status == 200) {
-                    // Blobs turn green only on success
-                    document.querySelectorAll('.blob').forEach(blob => {
-                        blob.classList.add('is-active');
-                    });
-
-                    // Show "Thank you" after 1 second of "Processing..."
+                    // 2. Wait 1 second (so user sees "Processing...")
                     setTimeout(() => {
+                        // 3. Turn blobs green
+                        document.querySelectorAll('.blob').forEach(blob => {
+                            blob.classList.add('is-active');
+                        });
+
+                        // 4. Update button to Thank You
                         submitBtn.innerText = "Thank you";
                         submitBtn.classList.add('success');
                         contactForm.reset();
@@ -557,11 +553,7 @@
             .catch(error => {
                 formResult.innerHTML = "Something went wrong!";
             })
-            .then(function() {
-                submitBtn.disabled = false;
-                submitBtn.innerText = "Send Request";
-                setTimeout(() => { formResult.innerHTML = ""; }, 5000);
-            });
+            
         });
         
         // Mute logic
